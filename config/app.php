@@ -166,6 +166,8 @@ return [
          * Package Service Providers...
          */
 
+        Sam\User\ServiceProvider::class,
+
         /*
          * Application Service Providers...
          */

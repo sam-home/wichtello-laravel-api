@@ -1,0 +1,1 @@
+<a href="{{ env('APP_URL') }}/users/forget_password/confirm?password_reset={{ $passwordReset }}">Passwort zurücksetzen</a>
