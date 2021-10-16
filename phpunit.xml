@@ -7,17 +7,17 @@
     <testsuites>
         <testsuite name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
-            <directory suffix="Test.php">./packages/sam-user/tests/Unit</directory>
+            <!--directory suffix="Test.php">./packages/sam-user/tests/Unit</directory-->
         </testsuite>
         <testsuite name="Feature">
             <directory suffix="Test.php">./tests/Feature</directory>
-            <directory suffix="Test.php">./packages/sam-user/tests/Feature</directory>
+            <!--directory suffix="Test.php">./packages/sam-user/tests/Feature</directory-->
         </testsuite>
     </testsuites>
     <coverage processUncoveredFiles="true">
         <include>
             <directory suffix=".php">./app</directory>
-            <directory suffix=".php">./packages/sam-user/tests</directory>
+            <!--directory suffix=".php">./packages/sam-user/tests</directory-->
         </include>
     </coverage>
     <php>
