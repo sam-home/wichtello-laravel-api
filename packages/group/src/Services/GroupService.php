@@ -74,10 +74,22 @@ class GroupService {
      * @param User $user
      * @return Collection
      */
-    public function invites(User $user): Collection
+    public function userInvites(User $user): Collection
     {
         return GroupUser::query()
             ->where('user_id', $user->id)
+            ->whereNull('joined_at')
+            ->get();
+    }
+
+    /**
+     * @param Group $group
+     * @return Collection
+     */
+    public function invites(Group $group): Collection
+    {
+        return GroupUser::query()
+            ->where('group_id', $group->id)
             ->whereNull('joined_at')
             ->get();
     }

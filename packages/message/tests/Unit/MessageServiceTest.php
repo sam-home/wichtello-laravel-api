@@ -54,7 +54,7 @@ class MessageServiceTest extends TestCase
         $group = $this->groupService->store($user, 'group name', 'group description');
         $this->messageService->store($group, $user, 'message');
 
-        $this->assertDatabaseHas('wishes', [
+        $this->assertDatabaseHas('messages', [
             'user_id' => $user->id,
             'group_id' => $group->id,
             'content' => 'message'

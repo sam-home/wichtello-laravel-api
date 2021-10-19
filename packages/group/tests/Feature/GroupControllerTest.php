@@ -168,7 +168,7 @@ class GroupControllerTest extends TestCase
             ->assertStatus(403);
     }
 
-    public function testInvites()
+    public function testUserInvites()
     {
         $creator = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
 
@@ -179,6 +179,21 @@ class GroupControllerTest extends TestCase
 
         $this->actingAs($user)
             ->get('/users/me/invites')
+            ->assertJsonCount(1)
+            ->assertStatus(200);
+    }
+
+    public function testGroupInvites()
+    {
+        $creator = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
+
+        $user = $this->userService->store('Jane Doe', 'jane.doe@example.org', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->groupService->invite($group, $creator, $user);
+
+        $this->actingAs($user)
+            ->get('/groups/' . $group->id . '/invites')
             ->assertJsonCount(1)
             ->assertStatus(200);
     }

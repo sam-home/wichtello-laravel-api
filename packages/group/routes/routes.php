@@ -16,10 +16,11 @@ Route::middleware('auth.basic')->prefix('groups')->name('groups.')->group(functi
     Route::delete('{group}', $controller . '@destroy')->name('destroy');
 
     Route::get('{group}/partner', $controller . '@partner')->name('partner');
+    Route::get('{group}/invites', $controller . '@invites')->name('invites');
 });
 
 Route::middleware('auth.basic')->prefix('users/me')->name('users.me.')->group(function () {
     $controller = GroupController::class;
 
-    Route::get('invites', $controller . '@invites')->name('invites');
+    Route::get('invites', $controller . '@userInvites')->name('userInvites');
 });

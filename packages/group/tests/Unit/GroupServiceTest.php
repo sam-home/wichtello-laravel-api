@@ -85,7 +85,7 @@ class GroupServiceTest extends TestCase
         ]);
     }
 
-    public function testInvitation()
+    public function testUserInvites()
     {
         $creator = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
 
@@ -93,13 +93,32 @@ class GroupServiceTest extends TestCase
 
         $user = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
 
-        $invitations = $this->groupService->invites($user);
+        $invitations = $this->groupService->userInvites($user);
 
         $this->assertEmpty($invitations);
 
         $this->groupService->invite($group, $creator, $user);
 
-        $invitations = $this->groupService->invites($user);
+        $invitations = $this->groupService->userInvites($user);
+
+        $this->assertNotEmpty($invitations);
+    }
+
+    public function testGroupInvites()
+    {
+        $creator = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+
+        $group = $this->groupService->store($creator, 'group name', 'group description');
+
+        $user = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+
+        $invitations = $this->groupService->invites($group);
+
+        $this->assertEmpty($invitations);
+
+        $this->groupService->invite($group, $creator, $user);
+
+        $invitations = $this->groupService->invites($group);
 
         $this->assertNotEmpty($invitations);
     }

@@ -31,6 +31,10 @@ class GroupController
         return $group;
     }
 
+    /**
+     * @param Request $request
+     * @return Group
+     */
     public function store(Request $request): Group
     {
         $input = $request->validate([
@@ -43,6 +47,11 @@ class GroupController
         return $this->groupService->store($user, $input['name'], $input['description']);
     }
 
+    /**
+     * @param Group $group
+     * @param Request $request
+     * @return Group
+     */
     public function update(Group $group, Request $request): Group
     {
         Gate::authorize('update', $group);
@@ -56,13 +65,29 @@ class GroupController
         return $this->groupService->update($group, $input);
     }
 
-    public function invites(): Collection
+    /**
+     * @param Group $group
+     * @return Collection
+     */
+    public function invites(Group $group): Collection
+    {
+        return $this->groupService->invites($group);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function userInvites(): Collection
     {
         $user = $this->userService->getAuthenticatedUser();
 
-        return $this->groupService->invites($user);
+        return $this->groupService->userInvites($user);
     }
 
+    /**
+     * @param Group $group
+     * @return User|null
+     */
     public function partner(Group $group): ?User
     {
         $user = $this->userService->getAuthenticatedUser();
