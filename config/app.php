@@ -166,7 +166,13 @@ return [
          * Package Service Providers...
          */
 
-        Sam\User\ServiceProvider::class,
+        User\ServiceProvider::class,
+        Group\ServiceProvider::class,
+        Wish\ServiceProvider::class,
+        Task\ServiceProvider::class,
+        Message\ServiceProvider::class,
+        Poll\ServiceProvider::class,
+        Event\ServiceProvider::class,
 
         /*
          * Application Service Providers...

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Group;
+/*use App\Models\Group;
 use App\Models\Poll;
 use App\Models\PollOption;
 use App\Models\Task;
@@ -147,4 +147,4 @@ Route::group(['middleware' => ['auth.basic', 'user-active']], function () {
     });
 });
 
-// Route::get('events/server-sent-events/{event_id}', ['as' => 'events.server-sent-events', 'uses' => 'EventController@serverSentEvents'])->where('event_id', '[0-9]+');
+// Route::get('events/server-sent-events/{event_id}', ['as' => 'events.server-sent-events', 'uses' => 'EventController@serverSentEvents'])->where('event_id', '[0-9]+');*/

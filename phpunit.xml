@@ -6,18 +6,36 @@
 >
     <testsuites>
         <testsuite name="Unit">
-            <directory suffix="Test.php">./tests/Unit</directory>
-            <!--directory suffix="Test.php">./packages/sam-user/tests/Unit</directory-->
+            <directory>./tests/Unit</directory>
+            <directory>./packages/user/tests/Unit</directory>
+            <directory>./packages/group/tests/Unit</directory>
+            <directory>./packages/wish/tests/Unit</directory>
+            <directory>./packages/task/tests/Unit</directory>
+            <directory>./packages/message/tests/Unit</directory>
+            <directory>./packages/poll/tests/Unit</directory>
+            <directory>./packages/event/tests/Unit</directory>
         </testsuite>
         <testsuite name="Feature">
-            <directory suffix="Test.php">./tests/Feature</directory>
-            <!--directory suffix="Test.php">./packages/sam-user/tests/Feature</directory-->
+            <directory>./tests/Feature</directory>
+            <directory>./packages/user/tests/Feature</directory>
+            <directory>./packages/group/tests/Feature</directory>
+            <directory>./packages/wish/tests/Feature</directory>
+            <directory>./packages/task/tests/Feature</directory>
+            <directory>./packages/message/tests/Feature</directory>
+            <directory>./packages/poll/tests/Feature</directory>
+            <directory>./packages/event/tests/Feature</directory>
         </testsuite>
     </testsuites>
     <coverage processUncoveredFiles="true">
         <include>
             <directory suffix=".php">./app</directory>
-            <!--directory suffix=".php">./packages/sam-user/tests</directory-->
+            <directory suffix=".php">./packages/user/tests</directory>
+            <directory suffix=".php">./packages/group/tests</directory>
+            <directory suffix=".php">./packages/wish/tests</directory>
+            <directory suffix=".php">./packages/task/tests</directory>
+            <directory suffix=".php">./packages/message/tests</directory>
+            <directory suffix=".php">./packages/poll/tests</directory>
+            <directory suffix=".php">./packages/event/tests</directory>
         </include>
     </coverage>
     <php>
