@@ -47,4 +47,16 @@ class UserControllerTest extends TestCase
             ])
             ->assertStatus(200);
     }
+
+    public function testAddPremium()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret', true);
+
+        $this->actingAs($user)->post('/users/premium')
+            ->assertJson([
+                'name' => 'John Doe',
+                'premium' => true
+            ])
+            ->assertStatus(200);
+    }
 }

@@ -142,4 +142,21 @@ class UserServiceTest extends TestCase
         $unauthenticatedUser = $this->userService->getAuthenticatedUser();
         $this->assertNull($unauthenticatedUser);
     }
+
+    public function testAddPremium()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.org', 'start');
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'John Doe',
+            'premium' => 0
+        ]);
+
+        $this->userService->setPremium($user, true);
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'John Doe',
+            'premium' => 1
+        ]);
+    }
 }

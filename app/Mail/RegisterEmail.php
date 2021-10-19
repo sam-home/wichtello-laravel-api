@@ -24,6 +24,11 @@ class RegisterEmail extends Mailable
 
     public function build()
     {
-        return $this->subject('Registrierung bei Wichtello.com')->view('emails.register', ['user' => $this->user, 'password' => $this->password, 'confirm' => $this->confirm]);
+        return $this->subject('Registrierung bei Wichtello.com')
+            ->view('emails.register', [
+                'user' => $this->user,
+                'password' => $this->password,
+                'confirm' => $this->confirm
+            ]);
     }
 }

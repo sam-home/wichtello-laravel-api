@@ -19,4 +19,10 @@ class UserController
     {
         return $this->userService->getAuthenticatedUser();
     }
+
+    public function premium(): User
+    {
+        $user = $this->userService->getAuthenticatedUser();
+        return $this->userService->setPremium($user, true);
+    }
 }

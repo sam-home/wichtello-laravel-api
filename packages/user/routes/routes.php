@@ -17,6 +17,7 @@ Route::middleware('auth.basic')->prefix('users')->name('user.')->group(function 
     Route::get('register-confirm', ['as' => 'register-confirm', 'uses' => $controller . '@registerConfirm']);
     Route::post('password-reset', ['as' => 'password-reset', 'uses' => $controller . '@forgetPassword']);
     Route::get('password-confirm', ['as' => 'password-confirm', 'uses' => $controller . '@forgetPasswordConfirm']);
+    Route::post('premium', ['as' => 'premium', 'uses' => $controller . '@premium']);
 
     /*Route::get('', $controller . '@index')->name('index');
     Route::get('{user}', $controller . '@get')->name('get');

@@ -23,6 +23,10 @@ class ForgetPasswordConfirmEmail extends Mailable
 
     public function build()
     {
-        return $this->subject('Bestätigung von Passwort vergessen bei Wichtelo.com')->view('emails.forget-password-confirm', ['user' => $this->user, 'password' => $this->password]);
+        return $this->subject('Bestätigung von Passwort vergessen bei Wichtelo.com')
+            ->view('emails.forget-password-confirm', [
+                'user' => $this->user,
+                'password' => $this->password
+            ]);
     }
 }

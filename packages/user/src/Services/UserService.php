@@ -171,4 +171,12 @@ class UserService {
 
         return $user;
     }
+
+    public function setPremium(User $user, bool $premium): User
+    {
+        $user->premium = $premium;
+        $user->save();
+
+        return $user;
+    }
 }
