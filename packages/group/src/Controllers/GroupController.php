@@ -62,4 +62,11 @@ class GroupController
 
         return $this->groupService->invites($user);
     }
+
+    public function partner(Group $group): ?User
+    {
+        $user = $this->userService->getAuthenticatedUser();
+
+        return $this->groupService->partner($group, $user);
+    }
 }

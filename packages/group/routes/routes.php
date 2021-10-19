@@ -14,6 +14,8 @@ Route::middleware('auth.basic')->prefix('groups')->name('groups.')->group(functi
     Route::post('', $controller . '@store')->name('store');
     Route::put('{group}', $controller . '@update')->name('update');
     Route::delete('{group}', $controller . '@destroy')->name('destroy');
+
+    Route::get('{group}/partner', $controller . '@partner')->name('partner');
 });
 
 Route::middleware('auth.basic')->prefix('users/me')->name('users.me.')->group(function () {

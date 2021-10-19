@@ -182,4 +182,17 @@ class GroupControllerTest extends TestCase
             ->assertJsonCount(1)
             ->assertStatus(200);
     }
+
+    public function testPartner()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $partner = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+
+        $this->groupService->setPartner($group, $user, $partner);
+
+        $this->actingAs($user)
+            ->get('/groups/' . $group->id . '/partner')
+            ->assertStatus(200);
+    }
 }
