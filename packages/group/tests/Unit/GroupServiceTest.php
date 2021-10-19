@@ -103,4 +103,32 @@ class GroupServiceTest extends TestCase
 
         $this->assertNotEmpty($invitations);
     }
+
+    public function testSetPartner()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $partner = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+
+        $this->groupService->setPartner($group, $user, $partner);
+
+        $this->assertDatabaseHas('group_partners', [
+            'group_id' => $group->id,
+            'user_id' => $user->id,
+            'partner_id' => $partner->id,
+        ]);
+    }
+
+    public function testGetPartner()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $partner = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+
+        $this->groupService->setPartner($group, $user, $partner);
+
+        $partner = $this->groupService->partner($group, $user);
+        $this->assertNotNull($partner);
+        $this->assertEquals('Jane Doe', $partner->name);
+    }
 }
