@@ -33,7 +33,7 @@ class WishControllerTest extends TestCase
     {
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
-        $this->get('/group/' . $group->id . '/wishes')->assertStatus(401);
+        $this->get('/groups/' . $group->id . '/wishes')->assertStatus(401);
     }
 
     public function testIndexWithAuthentication()
@@ -41,7 +41,7 @@ class WishControllerTest extends TestCase
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
         $this->wishService->store($group, $user, 'pony');
-        $this->actingAs($user)->get('/group/' . $group->id . '/wishes')
+        $this->actingAs($user)->get('/groups/' . $group->id . '/wishes')
             ->assertJsonFragment([
                 'content' => 'pony'
             ])
@@ -53,7 +53,7 @@ class WishControllerTest extends TestCase
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
         $wish = $this->wishService->store($group, $user, 'pony');
-        $this->actingAs($user)->get('/group/' . $group->id . '/wishes/' . $wish->id)
+        $this->actingAs($user)->get('/groups/' . $group->id . '/wishes/' . $wish->id)
             ->assertJsonFragment([
                 'content' => 'pony'
             ])
@@ -64,7 +64,7 @@ class WishControllerTest extends TestCase
     {
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
-        $this->actingAs($user)->post('/group/' . $group->id . '/wishes', ['content' => 'pony'])
+        $this->actingAs($user)->post('/groups/' . $group->id . '/wishes', ['content' => 'pony'])
             ->assertJsonFragment([
                 'content' => 'pony'
             ])
@@ -76,7 +76,7 @@ class WishControllerTest extends TestCase
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
         $wish = $this->wishService->store($group, $user, 'pony');
-        $this->actingAs($user)->put('/group/' . $group->id . '/wishes/' . $wish->id, ['content' => 'basketball'])
+        $this->actingAs($user)->put('/groups/' . $group->id . '/wishes/' . $wish->id, ['content' => 'basketball'])
             ->assertJsonFragment([
                 'content' => 'basketball'
             ])
@@ -88,7 +88,7 @@ class WishControllerTest extends TestCase
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
         $wish = $this->wishService->store($group, $user, 'pony');
-        $this->actingAs($user)->delete('/group/' . $group->id . '/wishes/' . $wish->id)
+        $this->actingAs($user)->delete('/groups/' . $group->id . '/wishes/' . $wish->id)
             ->assertStatus(200);
 
         $this->assertSoftDeleted('wishes', [

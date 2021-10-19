@@ -8,7 +8,7 @@ use Task\Models\Task;
 Route::model('group', Group::class);
 Route::model('task', Task::class);
 
-Route::middleware('auth.basic')->prefix('group/{group}/tasks')->name('group.tasks.')->group(function () {
+Route::middleware('auth.basic')->prefix('groups/{group}/tasks')->name('group.tasks.')->group(function () {
     $controller = TaskController::class;
 
     Route::get('', $controller . '@index')->name('index');

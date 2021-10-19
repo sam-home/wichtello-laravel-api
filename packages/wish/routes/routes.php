@@ -8,7 +8,7 @@ use Wish\Models\Wish;
 Route::model('group', Group::class);
 Route::model('wish', Wish::class);
 
-Route::middleware('auth.basic')->prefix('group/{group}/wishes')->name('group.wishes.')->group(function () {
+Route::middleware('auth.basic')->prefix('groups/{group}/wishes')->name('group.wishes.')->group(function () {
     $controller = WishController::class;
 
     Route::get('', $controller . '@index')->name('index');

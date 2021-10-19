@@ -33,7 +33,7 @@ class PollControllerTest extends TestCase
     {
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
-        $this->get('/group/' . $group->id . '/polls')->assertStatus(401);
+        $this->get('/groups/' . $group->id . '/polls')->assertStatus(401);
     }
 
     public function testIndexWithAuthentication()
@@ -41,7 +41,7 @@ class PollControllerTest extends TestCase
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
         $poll = $this->pollService->store($group, $user, 'poll name', 'poll description', ['option 1']);
-        $this->actingAs($user)->get('/group/' . $group->id . '/polls')
+        $this->actingAs($user)->get('/groups/' . $group->id . '/polls')
             ->assertJsonFragment([
                 'name' => 'poll name',
                 'description' => 'poll description',
@@ -54,7 +54,7 @@ class PollControllerTest extends TestCase
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
         $poll = $this->pollService->store($group, $user, 'task name', 'task description', ['option 1']);
-        $this->actingAs($user)->get('/group/' . $group->id . '/polls/' . $poll->id)
+        $this->actingAs($user)->get('/groups/' . $group->id . '/polls/' . $poll->id)
             ->assertJsonFragment([
                 'name' => 'task name',
                 'description' => 'task description'
@@ -68,7 +68,7 @@ class PollControllerTest extends TestCase
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
         $this->actingAs($user)->post(
-            '/group/' . $group->id . '/polls',
+            '/groups/' . $group->id . '/polls',
             [
                 'name' => 'poll name',
                 'description' => 'poll description',
@@ -88,7 +88,7 @@ class PollControllerTest extends TestCase
         $group = $this->groupService->store($user, 'group name', 'group description');
         $poll = $this->pollService->store($group, $user, 'poll name', 'poll description', ['option 1']);
         $this->actingAs($user)->put(
-            '/group/' . $group->id . '/polls/' . $poll->id,
+            '/groups/' . $group->id . '/polls/' . $poll->id,
             [
                 'name' => 'new name',
                 'description' => 'new description',
@@ -107,7 +107,7 @@ class PollControllerTest extends TestCase
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
         $poll = $this->pollService->store($group, $user, 'poll name', 'poll description', ['option 1']);
-        $this->actingAs($user)->delete('/group/' . $group->id . '/polls/' . $poll->id)
+        $this->actingAs($user)->delete('/groups/' . $group->id . '/polls/' . $poll->id)
             ->assertStatus(200);
 
         $this->assertSoftDeleted('polls', [

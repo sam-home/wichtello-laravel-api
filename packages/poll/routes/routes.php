@@ -8,7 +8,7 @@ use Poll\Models\Poll;
 Route::model('group', Group::class);
 Route::model('poll', Poll::class);
 
-Route::middleware('auth.basic')->prefix('group/{group}/polls')->name('group.polls.')->group(function () {
+Route::middleware('auth.basic')->prefix('groups/{group}/polls')->name('group.polls.')->group(function () {
     $controller = PollController::class;
 
     Route::get('', $controller . '@index')->name('index');

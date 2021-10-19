@@ -33,7 +33,7 @@ class TaskControllerTest extends TestCase
     {
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
-        $this->get('/group/' . $group->id . '/tasks')->assertStatus(401);
+        $this->get('/groups/' . $group->id . '/tasks')->assertStatus(401);
     }
 
     public function testIndexWithAuthentication()
@@ -41,7 +41,7 @@ class TaskControllerTest extends TestCase
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
         $this->taskService->store($group, $user, 'task name', 'task description', 2);
-        $this->actingAs($user)->get('/group/' . $group->id . '/tasks')
+        $this->actingAs($user)->get('/groups/' . $group->id . '/tasks')
             ->assertJsonFragment([
                 'name' => 'task name',
                 'description' => 'task description',
@@ -55,7 +55,7 @@ class TaskControllerTest extends TestCase
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
         $task = $this->taskService->store($group, $user, 'task name', 'task description', 2);
-        $this->actingAs($user)->get('/group/' . $group->id . '/tasks/' . $task->id)
+        $this->actingAs($user)->get('/groups/' . $group->id . '/tasks/' . $task->id)
             ->assertJsonFragment([
                 'name' => 'task name',
                 'description' => 'task description',
@@ -69,7 +69,7 @@ class TaskControllerTest extends TestCase
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
         $this->actingAs($user)->post(
-            '/group/' . $group->id . '/tasks',
+            '/groups/' . $group->id . '/tasks',
             [
                 'name' => 'task name',
                 'description' => 'task description',
@@ -89,7 +89,7 @@ class TaskControllerTest extends TestCase
         $group = $this->groupService->store($user, 'group name', 'group description');
         $task = $this->taskService->store($group, $user, 'task name', 'task description', 2);
         $this->actingAs($user)->put(
-            '/group/' . $group->id . '/tasks/' . $task->id,
+            '/groups/' . $group->id . '/tasks/' . $task->id,
             [
                 'name' => 'new name',
                 'description' => 'new description',
@@ -108,7 +108,7 @@ class TaskControllerTest extends TestCase
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
         $task = $this->taskService->store($group, $user, 'task name', 'task description', 2);
-        $this->actingAs($user)->delete('/group/' . $group->id . '/tasks/' . $task->id)
+        $this->actingAs($user)->delete('/groups/' . $group->id . '/tasks/' . $task->id)
             ->assertStatus(200);
 
         $this->assertSoftDeleted('tasks', [
