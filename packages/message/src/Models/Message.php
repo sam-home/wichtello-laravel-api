@@ -29,7 +29,7 @@ class Message extends Model
         'group_id' => 'int',
         'user_id' => 'int'
     ];
-    protected $with = ['user', 'group'];
+    protected $with = ['user'];
 
     /**
      * @return HasOne

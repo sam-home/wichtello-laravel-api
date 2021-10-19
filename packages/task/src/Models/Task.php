@@ -4,7 +4,10 @@ namespace Task\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use User\Models\User;
 
 /**
  * @property int $id
@@ -27,4 +30,19 @@ class Task extends Model
         'user_id' => 'int',
         'slots' => 'int'
     ];
+    protected $with = ['user', 'users'];
+
+    /**
+     * @return HasOne
+     */
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'task_users', 'task_id', 'user_id')
+            ->withPivot(['comment']);
+    }
 }
