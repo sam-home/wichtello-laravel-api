@@ -6,7 +6,6 @@
 >
     <testsuites>
         <testsuite name="Unit">
-            <directory>./tests/Unit</directory>
             <directory>./packages/user/tests/Unit</directory>
             <directory>./packages/group/tests/Unit</directory>
             <directory>./packages/wish/tests/Unit</directory>
@@ -16,7 +15,6 @@
             <directory>./packages/event/tests/Unit</directory>
         </testsuite>
         <testsuite name="Feature">
-            <directory>./tests/Feature</directory>
             <directory>./packages/user/tests/Feature</directory>
             <directory>./packages/group/tests/Feature</directory>
             <directory>./packages/wish/tests/Feature</directory>
