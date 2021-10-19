@@ -33,7 +33,7 @@ class MessageControllerTest extends TestCase
     {
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
-        $this->get('/group/' . $group->id . '/messages')->assertStatus(401);
+        $this->get('/groups/' . $group->id . '/messages')->assertStatus(401);
     }
 
     public function testIndexWithAuthentication()
@@ -41,7 +41,7 @@ class MessageControllerTest extends TestCase
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
         $this->messageService->store($group, $user, 'message');
-        $this->actingAs($user)->get('/group/' . $group->id . '/messages')
+        $this->actingAs($user)->get('/groups/' . $group->id . '/messages')
             ->assertJsonFragment([
                 'content' => 'message'
             ])
@@ -52,7 +52,7 @@ class MessageControllerTest extends TestCase
     {
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
-        $this->actingAs($user)->post('/group/' . $group->id . '/messages', ['content' => 'message'])
+        $this->actingAs($user)->post('/groups/' . $group->id . '/messages', ['content' => 'message'])
             ->assertJsonFragment([
                 'content' => 'message'
             ])

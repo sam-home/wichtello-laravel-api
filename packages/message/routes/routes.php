@@ -7,7 +7,7 @@ use Message\Models\Message;
 
 Route::model('group', Group::class);
 
-Route::middleware('auth.basic')->prefix('group/{group}/messages')->name('group.messages.')->group(function () {
+Route::middleware('auth.basic')->prefix('groups/{group}/messages')->name('group.messages.')->group(function () {
     $controller = MessageController::class;
 
     Route::get('', $controller . '@index')->name('index');
