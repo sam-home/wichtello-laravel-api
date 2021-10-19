@@ -27,13 +27,6 @@
     <coverage processUncoveredFiles="true">
         <include>
             <directory suffix=".php">./app</directory>
-            <directory suffix=".php">./packages/user/tests</directory>
-            <directory suffix=".php">./packages/group/tests</directory>
-            <directory suffix=".php">./packages/wish/tests</directory>
-            <directory suffix=".php">./packages/task/tests</directory>
-            <directory suffix=".php">./packages/message/tests</directory>
-            <directory suffix=".php">./packages/poll/tests</directory>
-            <directory suffix=".php">./packages/event/tests</directory>
         </include>
     </coverage>
     <php>
