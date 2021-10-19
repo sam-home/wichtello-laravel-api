@@ -3,11 +3,13 @@
 namespace Group\Models;
 
 use Carbon\Carbon;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use User\Models\User;
+use User\Services\UserService;
 
 /**
  * @property int $id
@@ -31,6 +33,8 @@ class Group extends Model
         'user_id' => 'int'
     ];
 
+    protected $appends = ['is_admin'];
+
     /**
      * @return BelongsToMany
      */
@@ -38,5 +42,26 @@ class Group extends Model
     {
         return $this->belongsToMany(User::class, 'group_users', 'group_id', 'user_id')
             ->withPivot(['joined_at', 'is_admin']);
+    }
+
+    /**
+     * @return bool
+     * @throws BindingResolutionException
+     */
+    public function getIsAdminAttribute(): bool
+    {
+        /** @var UserService $userService */
+        $userService = app()->make(UserService::class);
+        $user = $userService->getAuthenticatedUser();
+
+        if ($user === null) {
+            return false;
+        }
+
+        return GroupUser::query()
+            ->where('group_id', $this->id)
+            ->where('user_id', $user->id)
+            ->where('is_admin', true)
+            ->exists();
     }
 }
