@@ -88,10 +88,16 @@ class GroupService {
      */
     public function invites(Group $group): Collection
     {
-        return GroupUser::query()
-            ->where('group_id', $group->id)
-            ->whereNull('joined_at')
-            ->get();
+        return $group->users()->wherePivotNull('joined_at')->get();
+    }
+
+    /**
+     * @param Group $group
+     * @return Collection
+     */
+    public function users(Group $group): Collection
+    {
+        return $group->users()->wherePivotNotNull('joined_at')->get();
     }
 
     /**

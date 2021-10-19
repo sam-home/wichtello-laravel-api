@@ -75,6 +75,15 @@ class GroupController
     }
 
     /**
+     * @param Group $group
+     * @return Collection
+     */
+    public function users(Group $group): Collection
+    {
+        return $this->groupService->users($group);
+    }
+
+    /**
      * @return Collection
      */
     public function userInvites(): Collection

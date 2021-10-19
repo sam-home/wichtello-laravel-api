@@ -17,6 +17,7 @@ Route::middleware('auth.basic')->prefix('groups')->name('groups.')->group(functi
 
     Route::get('{group}/partner', $controller . '@partner')->name('partner');
     Route::get('{group}/invites', $controller . '@invites')->name('invites');
+    Route::get('{group}/users', $controller . '@users')->name('users');
 });
 
 Route::middleware('auth.basic')->prefix('users/me')->name('users.me.')->group(function () {

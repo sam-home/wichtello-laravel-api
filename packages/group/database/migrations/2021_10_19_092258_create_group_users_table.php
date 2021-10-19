@@ -19,6 +19,7 @@ class CreateGroupUsersTable extends Migration
             $table->bigInteger('creator_id');
             $table->bigInteger('user_id');
             $table->dateTime('joined_at')->nullable();
+            $table->boolean('is_admin')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

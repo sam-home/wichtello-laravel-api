@@ -4,7 +4,9 @@ namespace Group\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use User\Models\User;
 
 /**
  * @property int $id
@@ -25,6 +27,16 @@ class GroupUser extends Model
     protected $casts = [
         'group_id' => 'int',
         'creator_id' => 'int',
-        'user_id' => 'int'
+        'user_id' => 'int',
+        'is_admin' => 'bool'
     ];
+    protected $with = ['user'];
+
+    /**
+     * @return HasOne
+     */
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
 }
