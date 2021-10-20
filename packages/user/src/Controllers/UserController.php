@@ -2,6 +2,7 @@
 
 namespace User\Controllers;
 
+use Illuminate\Http\Request;
 use User\Models\User;
 use User\Services\UserService;
 
@@ -24,5 +25,17 @@ class UserController
     {
         $user = $this->userService->getAuthenticatedUser();
         return $this->userService->setPremium($user, true);
+    }
+
+    public function register(Request $request)
+    {
+        $input = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
+            'password_confirm' => 'required'
+        ]);
+
+        $this->userService->store($input['name'], $input['email'], $input['password']);
     }
 }

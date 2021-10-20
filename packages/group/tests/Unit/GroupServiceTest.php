@@ -5,6 +5,7 @@ namespace Group\Tests\Unit;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Group\Services\GroupService;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 use User\Services\UserService;
 
@@ -138,7 +139,7 @@ class GroupServiceTest extends TestCase
         ]);
     }
 
-    public function testGetPartner()
+    public function testPartner()
     {
         $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
@@ -149,5 +150,96 @@ class GroupServiceTest extends TestCase
         $partner = $this->groupService->partner($group, $user);
         $this->assertNotNull($partner);
         $this->assertEquals('Jane Doe', $partner->name);
+    }
+
+    public function testStart()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->assertTrue(
+            DB::table('groups')
+                ->where('id', $group->id)
+                ->whereNull('started_at')
+                ->exists());
+
+        $group = $this->groupService->start($group);
+
+        $this->assertTrue(
+            DB::table('groups')
+                ->where('id', $group->id)
+                ->whereNotNull('started_at')
+                ->exists());
+    }
+
+    public function testEnd()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->assertTrue(
+            DB::table('groups')
+                ->where('id', $group->id)
+                ->whereNull('ended_at')
+                ->exists());
+
+        $group = $this->groupService->end($group);
+
+        $this->assertTrue(
+            DB::table('groups')
+                ->where('id', $group->id)
+                ->whereNotNull('ended_at')
+                ->exists());
+    }
+
+    public function testReset()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->assertTrue(
+            DB::table('groups')
+                ->where('id', $group->id)
+                ->whereNull('started_at')
+                ->whereNull('ended_at')
+                ->exists());
+
+        $group = $this->groupService->start($group);
+        $group = $this->groupService->end($group);
+
+        $this->assertTrue(
+            DB::table('groups')
+                ->where('id', $group->id)
+                ->whereNotNull('started_at')
+                ->whereNotNull('ended_at')
+                ->exists());
+    }
+
+    public function testCode()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->assertTrue(
+            DB::table('groups')
+                ->where('id', $group->id)
+                ->whereNull('join_code')
+                ->exists());
+
+        $group = $this->groupService->generateCode($group);
+
+        $this->assertTrue(
+            DB::table('groups')
+                ->where('id', $group->id)
+                ->whereNotNull('join_code')
+                ->exists());
+
+        $group = $this->groupService->resetCode($group);
+
+        $this->assertTrue(
+            DB::table('groups')
+                ->where('id', $group->id)
+                ->whereNull('join_code')
+                ->exists());
     }
 }

@@ -103,4 +103,49 @@ class GroupController
 
         return $this->groupService->partner($group, $user);
     }
+
+    /**
+     * @param Group $group
+     * @return Group
+     */
+    public function start(Group $group): Group
+    {
+        return $this->groupService->start($group);
+    }
+
+    /**
+     * @param Group $group
+     * @return Group
+     */
+    public function end(Group $group): Group
+    {
+        return $this->groupService->end($group);
+    }
+
+    /**
+     * @param Group $group
+     * @return Group
+     */
+    public function reset(Group $group): Group
+    {
+        return $this->groupService->reset($group);
+    }
+
+    /**
+     * @param Group $group
+     * @return Group
+     */
+    public function generateCode(Group $group): Group
+    {
+        return $this->groupService->generateCode($group);
+    }
+
+    /**
+     * @param Group $group
+     * @return Group
+     */
+    public function resetCode(Group $group): Group
+    {
+        return $this->groupService->resetCode($group);
+    }
 }

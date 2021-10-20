@@ -59,4 +59,15 @@ class UserControllerTest extends TestCase
             ])
             ->assertStatus(200);
     }
+
+    public function testRegister()
+    {
+        $this->post('/users/register', [
+            'name' => 'John Doe',
+            'email' => 'john.doe@example.org',
+            'password' => 'secret123',
+            'password_confirm' => 'secret123'
+        ])
+        ->assertStatus(200);
+    }
 }

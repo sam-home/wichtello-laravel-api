@@ -2,6 +2,7 @@
 
 namespace Group\Services;
 
+use Carbon\Carbon;
 use Group\Models\Group;
 use Group\Models\GroupPartner;
 use Group\Models\GroupUser;
@@ -22,16 +23,15 @@ class GroupService {
      * @param User $user
      * @param string $name
      * @param string $description
-     * @param string $state
      * @return Group
      */
-    public function store(User $user, string $name, string $description, string $state = 'invite'): Group
+    public function store(User $user, string $name, string $description): Group
     {
         $group = new Group();
         $group->user_id = $user->id;
         $group->name = $name;
         $group->description = $description;
-        $group->state = $state;
+        $group->status = 'start';
         $group->save();
 
         return $group;
@@ -145,5 +145,69 @@ class GroupService {
         }
 
         return $groupPartner->partner;
+    }
+
+    /**
+     * @param Group $group
+     * @return Group
+     */
+    public function start(Group $group): Group
+    {
+        $group->status = 'running';
+        $group->started_at = Carbon::now();
+        $group->save();
+
+        return $group;
+    }
+
+    /**
+     * @param Group $group
+     * @return Group
+     */
+    public function end(Group $group): Group
+    {
+        $group->status = 'end';
+        $group->ended_at = Carbon::now();
+        $group->save();
+
+        return $group;
+    }
+
+    /**
+     * @param Group $group
+     * @return Group
+     */
+    public function reset(Group $group): Group
+    {
+        $group->status = 'start';
+        $group->started_at = null;
+        $group->ended_at = null;
+        $group->save();
+
+        return $group;
+    }
+
+    /**
+     * @param Group $group
+     * @return Group
+     */
+    public function generateCode(Group $group): Group
+    {
+        $group->join_code = sha1(uniqid().time());
+        $group->save();
+
+        return $group;
+    }
+
+    /**
+     * @param Group $group
+     * @return Group
+     */
+    public function resetCode(Group $group): Group
+    {
+        $group->join_code = null;
+        $group->save();
+
+        return $group;
     }
 }

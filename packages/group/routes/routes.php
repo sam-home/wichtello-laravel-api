@@ -18,6 +18,13 @@ Route::middleware('auth.basic')->prefix('groups')->name('groups.')->group(functi
     Route::get('{group}/partner', $controller . '@partner')->name('partner');
     Route::get('{group}/invites', $controller . '@invites')->name('invites');
     Route::get('{group}/users', $controller . '@users')->name('users');
+
+    Route::post('{group}/start', $controller . '@start')->name('start');
+    Route::post('{group}/end', $controller . '@end')->name('end');
+    Route::post('{group}/reset', $controller . '@reset')->name('reset');
+
+    Route::post('{group}/code', $controller . '@generateCode')->name('generate.code');
+    Route::delete('{group}/code', $controller . '@resetCode')->name('reset.code');
 });
 
 Route::middleware('auth.basic')->prefix('users/me')->name('users.me.')->group(function () {

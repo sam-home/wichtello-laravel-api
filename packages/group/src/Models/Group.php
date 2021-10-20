@@ -14,11 +14,13 @@ use User\Services\UserService;
 /**
  * @property int $id
  * @property int $user_id
- * @property string $state // invite, start
  * @property string $name
- * @property string $join_link
+ * @property string $join_code
  * @property string $description
+ * @property string $status
  * @property Collection $users
+ * @property Carbon|null $started_at
+ * @property Carbon|null $ended_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at

@@ -50,8 +50,7 @@ class GroupControllerTest extends TestCase
             ->assertJsonFragment([
                 'user_id' => $user->id,
                 'name' => 'group name',
-                'description' => 'group description',
-                'state' => 'invite'
+                'description' => 'group description'
             ]);
     }
 
@@ -60,7 +59,7 @@ class GroupControllerTest extends TestCase
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
 
         $this->groupService->store($user, 'group name', 'group description');
-        $this->groupService->store($user, 'new group name', 'new group description', 'started');
+        $this->groupService->store($user, 'new group name', 'new group description');
 
         $this->actingAs($user)->get('/groups')
             ->assertJsonCount(2)
@@ -68,8 +67,7 @@ class GroupControllerTest extends TestCase
             ->assertJsonFragment([
                 'user_id' => $user->id,
                 'name' => 'new group name',
-                'description' => 'new group description',
-                'state' => 'started'
+                'description' => 'new group description'
             ]);
     }
 
@@ -96,8 +94,7 @@ class GroupControllerTest extends TestCase
             ->assertJsonFragment([
                 'user_id' => $user->id,
                 'name' => 'group name',
-                'description' => 'group description',
-                'state' => 'invite'
+                'description' => 'group description'
             ]);
     }
 
@@ -208,6 +205,36 @@ class GroupControllerTest extends TestCase
 
         $this->actingAs($user)
             ->get('/groups/' . $group->id . '/partner')
+            ->assertStatus(200);
+    }
+
+    public function testStart()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->actingAs($user)
+            ->post('/groups/' . $group->id . '/start')
+            ->assertStatus(200);
+    }
+
+    public function testEnd()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->actingAs($user)
+            ->post('/groups/' . $group->id . '/start')
+            ->assertStatus(200);
+    }
+
+    public function testReset()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->actingAs($user)
+            ->post('/groups/' . $group->id . '/start')
             ->assertStatus(200);
     }
 }
