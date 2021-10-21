@@ -3,15 +3,17 @@
 namespace Wish\Controllers;
 
 use Group\Models\Group;
+use Group\Services\GroupService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use User\Models\User;
+use User\Services\UserService;
 use Wish\Models\Wish;
 use Wish\Services\WishService;
 
 class WishController
 {
-    public function __construct(public WishService $wishService) {
+    public function __construct(protected WishService $wishService, protected UserService $userService) {
     }
 
     /**
@@ -20,7 +22,8 @@ class WishController
      */
     public function index(Group $group): Collection
     {
-        return $this->wishService->index($group);
+        $user = $this->userService->getAuthenticatedUser();
+        return $this->wishService->index($group, $user);
     }
 
     /**
@@ -44,8 +47,7 @@ class WishController
             'content' => 'required'
         ]);
 
-        /** @var User $user */
-        $user = auth()->user();
+        $user = $this->userService->getAuthenticatedUser();
 
         return $this->wishService->store($group, $user, $input['content']);
     }
@@ -72,5 +74,11 @@ class WishController
     public function destroy(Group $group, Wish $wish)
     {
         $this->wishService->destroy($wish);
+    }
+
+    public function getPartnerWishes(Group $group)
+    {
+        $user = $this->userService->getAuthenticatedUser();
+        return $this->wishService->getPartnerWishes($group, $user);
     }
 }

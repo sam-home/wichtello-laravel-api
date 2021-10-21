@@ -33,7 +33,7 @@ class WishServiceTest extends TestCase
     {
         $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
-        $wishes = $this->wishService->index($group);
+        $wishes = $this->wishService->index($group, $user);
 
         $this->assertEquals([], $wishes->toArray());
     }
@@ -43,7 +43,7 @@ class WishServiceTest extends TestCase
         $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
         $this->wishService->store($group, $user, 'pony');
-        $wishes = $this->wishService->index($group);
+        $wishes = $this->wishService->index($group, $user);
 
         $this->assertCount(1, $wishes);
     }
@@ -88,5 +88,22 @@ class WishServiceTest extends TestCase
         $this->assertSoftDeleted('wishes', [
             'content' => 'pony'
         ]);
+    }
+
+    public function testPartnerWishes()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $partner = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->groupService->setPartner($group, $user, $partner);
+
+        $index = $this->wishService->getPartnerWishes($group, $user);
+        $this->assertCount(0, $index);
+
+        $this->wishService->store($group, $partner, 'pony');
+
+        $index = $this->wishService->getPartnerWishes($group, $user);
+        $this->assertCount(1, $index);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Wish\Services;
 
+use Group\Services\GroupService;
 use User\Models\User;
 use Group\Models\Group;
 use Illuminate\Support\Collection;
@@ -9,13 +10,21 @@ use Wish\Models\Wish;
 
 class WishService
 {
+    public function __construct(protected GroupService $groupService)
+    {
+    }
+
     /**
      * @param Group $group
+     * @param User $user
      * @return Collection
      */
-    public function index(Group $group): Collection
+    public function index(Group $group, User $user): Collection
     {
-        return Wish::query()->where('group_id', $group->id)->get();
+        return Wish::query()
+            ->where('group_id', $group->id)
+            ->where('user_id', $user->id)
+            ->get();
     }
 
     /**
@@ -55,5 +64,16 @@ class WishService
     public function destroy(Wish $wish): bool
     {
         return $wish->delete() === true;
+    }
+
+    public function getPartnerWishes(Group $group, User $user): Collection
+    {
+        $partner = $this->groupService->partner($group, $user);
+
+        if ($partner === null) {
+            return collect([]);
+        }
+
+        return $this->index($group, $partner);
     }
 }

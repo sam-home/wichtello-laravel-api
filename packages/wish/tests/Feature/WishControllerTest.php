@@ -95,4 +95,20 @@ class WishControllerTest extends TestCase
             'content' => 'pony'
         ]);
     }
+
+    public function testPartnerWishes()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
+        $partner = $this->userService->store('Jane Doe', 'jane.doe@example.org', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->groupService->setPartner($group, $user, $partner);
+        $this->wishService->store($group, $partner, 'pony');
+
+        $this->actingAs($user)->get('/groups/' . $group->id . '/partner/wishes')
+            ->assertJsonFragment([
+                'content' => 'pony'
+            ])
+            ->assertStatus(200);
+    }
 }
