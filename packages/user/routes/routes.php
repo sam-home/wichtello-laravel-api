@@ -10,7 +10,7 @@ Route::model('group', User::class);
 Route::middleware('auth.basic')->prefix('users')->name('user.')->group(function () {
     $controller = UserController::class;
 
-    Route::get('me', $controller . '@me')->name('me');
+    Route::put('me', $controller . '@me')->name('me');
     Route::post('premium', $controller . '@premium')->name('premium');
 });
 

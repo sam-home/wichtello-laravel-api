@@ -11,9 +11,15 @@ class UserController
     public function __construct(public UserService $userService) {
     }
 
-    public function me(): User
+    public function me(Request $request): User
     {
-        return $this->userService->getAuthenticatedUser();
+        $input = $request->validate([
+            'name' => 'sometimes',
+            'password' => 'sometimes'
+        ]);
+
+        $user = $this->userService->getAuthenticatedUser();
+        return $this->userService->update($user, $input);
     }
 
     public function authenticate(): User

@@ -29,9 +29,9 @@ class UserControllerTest extends TestCase
     {
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret', true);
 
-        $this->actingAs($user)->get('/users/me')
+        $this->actingAs($user)->put('/users/me', ['name' => 'Jack'])
             ->assertJson([
-                'name' => 'John Doe'
+                'name' => 'Jack'
             ])
             ->assertStatus(200);
     }
