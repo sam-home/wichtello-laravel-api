@@ -148,4 +148,18 @@ class GroupController
     {
         return $this->groupService->resetCode($group);
     }
+
+    /**
+     * @param Request $request
+     */
+    public function join(Request $request)
+    {
+        $input = $request->validate([
+            'code' => 'required'
+        ]);
+
+        $user = $this->userService->getAuthenticatedUser();
+
+        $this->groupService->join($user, $input['code']);
+    }
 }

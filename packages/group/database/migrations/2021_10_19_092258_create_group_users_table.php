@@ -16,7 +16,7 @@ class CreateGroupUsersTable extends Migration
         Schema::create('group_users', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('group_id');
-            $table->bigInteger('creator_id');
+            $table->bigInteger('creator_id')->nullable();
             $table->bigInteger('user_id');
             $table->dateTime('joined_at')->nullable();
             $table->boolean('is_admin')->default(0);

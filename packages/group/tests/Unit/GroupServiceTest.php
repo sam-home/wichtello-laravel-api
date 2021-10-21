@@ -242,4 +242,22 @@ class GroupServiceTest extends TestCase
                 ->whereNull('join_code')
                 ->exists());
     }
+
+    public function testJoin()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $group = $this->groupService->generateCode($group);
+
+        $this->groupService->join($newUser, $group->join_code);
+
+        $this->assertTrue(
+            DB::table('group_users')
+                ->where('group_id', $group->id)
+                ->where('user_id', $newUser->id)
+                ->whereNotNull('joined_at')
+                ->exists());
+    }
 }

@@ -210,4 +210,18 @@ class GroupService {
 
         return $group;
     }
+
+    public function join(User $user, string $code): bool
+    {
+        /** @var Group $group */
+        $group = Group::query()->where('join_code', $code)->first();
+
+        if ($group === null) {
+            return false;
+        }
+
+        $group->users()->attach($user->id, ['joined_at' => Carbon::now()]);
+
+        return true;
+    }
 }

@@ -237,4 +237,16 @@ class GroupControllerTest extends TestCase
             ->post('/groups/' . $group->id . '/start')
             ->assertStatus(200);
     }
+
+    public function testJoin()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $group = $this->groupService->generateCode($group);
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+
+        $this->actingAs($newUser)
+            ->post('/users/join', ['code' => $group->join_code])
+            ->assertStatus(200);
+    }
 }

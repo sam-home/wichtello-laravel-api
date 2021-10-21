@@ -27,6 +27,12 @@ Route::middleware('auth.basic')->prefix('groups')->name('groups.')->group(functi
     Route::delete('{group}/code', $controller . '@resetCode')->name('reset.code');
 });
 
+Route::middleware('auth.basic')->prefix('users')->name('users.')->group(function () {
+    $controller = GroupController::class;
+
+    Route::post('join', $controller . '@join')->name('join');
+});
+
 Route::middleware('auth.basic')->prefix('users/me')->name('users.me.')->group(function () {
     $controller = GroupController::class;
 
