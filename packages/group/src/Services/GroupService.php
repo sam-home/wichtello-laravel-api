@@ -163,11 +163,11 @@ class GroupService {
         $userIds = $group->users()->wherePivotNotNull('joined_at')->pluck('users.id')->toArray();
         $partnerIds = $this->findPartners($userIds);
 
-        foreach ($userIds as $key => $userId) {
+        foreach ($partnerIds as $key => $partnerId) {
             /** @var User $user */
-            $user = User::query()->find($userId);
+            $user = User::query()->find($userIds[$key]);
             /** @var User $partner */
-            $partner = User::query()->find($partnerIds[$key]);
+            $partner = User::query()->find($partnerId);
             $this->setPartner($group, $user, $partner);
         }
 
