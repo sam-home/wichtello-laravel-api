@@ -68,6 +68,26 @@ class UserControllerTest extends TestCase
             'password' => 'secret123',
             'password_confirm' => 'secret123'
         ])
-        ->assertStatus(200);
+            ->assertStatus(200);
+    }
+
+    public function testReset()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret', true);
+
+        $this->actingAs($user)->post('/users/reset', ['email' => 'john.doe@example.org'])
+            ->assertStatus(200);
+    }
+
+    public function testChange()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret', true);
+
+        $this->userService->reset($user->email);
+
+        $user->refresh();
+
+        $this->actingAs($user)->post('/users/change', ['code' => $user->reset, 'password' => 'secret123'])
+            ->assertStatus(200);
     }
 }

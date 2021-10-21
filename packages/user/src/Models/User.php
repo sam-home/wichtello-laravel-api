@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $password
  * @property string $confirm
  * @property bool $active
- * @property string $token
  * @property string $reset
  * @property bool $premium
  * @property Carbon|null $created_at
@@ -27,7 +26,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
     use Authenticatable;
 
     protected $table = 'users';
-    protected $hidden = ['password', 'token'];
+    protected $hidden = ['password', 'reset'];
     protected $casts = [
         'active' => 'bool',
         'premium' => 'bool'

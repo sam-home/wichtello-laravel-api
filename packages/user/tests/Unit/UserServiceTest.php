@@ -159,4 +159,40 @@ class UserServiceTest extends TestCase
             'premium' => 1
         ]);
     }
+
+    public function testReset()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.org', 'start');
+
+        $this->userService->reset($user->email);
+
+        $user->refresh();
+
+        $this->assertDatabaseHas('users', [
+            'reset' => $user->reset
+        ]);
+    }
+
+    public function testChange()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.org', 'start');
+
+        $this->userService->reset($user->email);
+
+        $user->refresh();
+
+        $success = $this->userService->change('invalid_code', 'secret');
+
+        $this->assertTrue($this->userService->checkPassword($user, 'start'));
+
+        $this->assertFalse($success);
+
+        $success = $this->userService->change($user->reset, 'secret');
+
+        $this->assertTrue($success);
+
+        $user->refresh();
+
+        $this->assertTrue($this->userService->checkPassword($user, 'secret'));
+    }
 }

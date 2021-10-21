@@ -11,22 +11,14 @@ Route::middleware('auth.basic')->prefix('users')->name('user.')->group(function 
     $controller = UserController::class;
 
     Route::get('me', $controller . '@me')->name('me');
-    Route::post('premium', ['as' => 'premium', 'uses' => $controller . '@premium']);
-
-    /*Route::get('', $controller . '@index')->name('index');
-    Route::get('{user}', $controller . '@get')->name('get');
-    Route::post('', $controller . '@store')->name('store');
-    Route::put('{user}', $controller . '@update')->name('update');
-    Route::delete('{user}', $controller . '@destroy')->name('destroy');*/
+    Route::post('premium', $controller . '@premium')->name('premium');
 });
 
 Route::prefix('users')->name('user.')->group(function () {
     $controller = UserController::class;
 
-    Route::post('register', ['as' => 'register', 'uses' => $controller . '@register']);
-
-    Route::post('authenticate', ['as' => 'authenticate', 'uses' => $controller . '@authenticate']);
-    Route::get('register-confirm', ['as' => 'register-confirm', 'uses' => $controller . '@registerConfirm']);
-    Route::post('password-reset', ['as' => 'password-reset', 'uses' => $controller . '@forgetPassword']);
-    Route::get('password-confirm', ['as' => 'password-confirm', 'uses' => $controller . '@forgetPasswordConfirm']);
+    Route::post('authenticate', $controller . '@authenticate')->name('authenticate');
+    Route::post('register', $controller . '@register')->name('register');
+    Route::post('reset', $controller . '@reset')->name('reset');
+    Route::post('change', $controller . '@change')->name('change');
 });

@@ -38,4 +38,23 @@ class UserController
 
         $this->userService->store($input['name'], $input['email'], $input['password']);
     }
+
+    public function reset(Request $request)
+    {
+        $input = $request->validate([
+            'email' => 'required',
+        ]);
+
+        $this->userService->reset($input['email']);
+    }
+
+    public function change(Request $request)
+    {
+        $input = $request->validate([
+            'code' => 'required',
+            'password' => 'required'
+        ]);
+
+        $this->userService->change($input['code'], $input['password']);
+    }
 }

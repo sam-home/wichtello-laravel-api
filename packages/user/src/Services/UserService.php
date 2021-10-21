@@ -2,6 +2,8 @@
 
 namespace User\Services;
 
+use App\Mail\ForgetPasswordEmail;
+use Illuminate\Support\Facades\Mail;
 use User\Exceptions\ConfirmException;
 use User\Exceptions\ResetException;
 use User\Models\User;
@@ -172,11 +174,58 @@ class UserService {
         return $user;
     }
 
+    /**
+     * @param User $user
+     * @param bool $premium
+     * @return User
+     */
     public function setPremium(User $user, bool $premium): User
     {
         $user->premium = $premium;
         $user->save();
 
         return $user;
+    }
+
+    /**
+     * @param string $email
+     * @return bool
+     */
+    public function reset(string $email): bool
+    {
+        /** @var User $user */
+        $user = User::query()->where('email', $email)->first();
+
+        if ($user === null) {
+            return false;
+        }
+
+        $user->reset = $this->generateRandomToken();
+        $user->save();
+
+        Mail::to($email)->send(new ForgetPasswordEmail($user));
+
+        return true;
+    }
+
+    /**
+     * @param string $resetToken
+     * @param string $password
+     * @return bool
+     */
+    public function change(string $resetToken, string $password): bool
+    {
+        /** @var User $user */
+        $user = User::query()->where('reset', $resetToken)->first();
+
+        if ($user === null) {
+            return false;
+        }
+
+        $user->reset = null;
+        $user->password = Hash::make($password);
+        $user->save();
+
+        return true;
     }
 }
