@@ -3,6 +3,7 @@
 namespace Group\Controllers;
 
 use Group\Models\Group;
+use Group\Models\GroupUser;
 use Group\Services\GroupService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -161,5 +162,92 @@ class GroupController
         $user = $this->userService->getAuthenticatedUser();
 
         $this->groupService->join($user, $input['code']);
+    }
+
+    /**
+     * @param Group $group
+     */
+    public function leave(Group $group)
+    {
+        $user = $this->userService->getAuthenticatedUser();
+
+        $this->groupService->removeUserFromGroup($group, $user);
+    }
+
+    /**
+     * @param Group $group
+     * @param User $userToRemove
+     */
+    public function removeUser(Group $group, User $userToRemove)
+    {
+        $this->groupService->removeUserFromGroup($group, $userToRemove);
+    }
+
+    /**
+     * @param Group $group
+     */
+    public function accept(Group $group)
+    {
+        $user = $this->userService->getAuthenticatedUser();
+
+        $this->groupService->accept($group, $user);
+    }
+
+    /**
+     * @param Group $group
+     */
+    public function deny(Group $group)
+    {
+        $user = $this->userService->getAuthenticatedUser();
+
+        $this->groupService->deny($group, $user);
+    }
+
+    /**
+     * @param Group $group
+     * @param User $user
+     * @return User|null
+     */
+    public function getUser(Group $group, User $user): ?User
+    {
+        return $this->groupService->getUser($group, $user);
+    }
+
+    /**
+     * @param Group $group
+     * @param User $user
+     * @param Request $request
+     */
+    public function updateUser(Group $group, User $user, Request $request)
+    {
+        $input = $request->validate([
+            'admin' => 'required|boolean'
+        ]);
+
+        $this->groupService->setAdmin($group, $user, boolval($input['admin']));
+    }
+
+    /**
+     * @param Group $group
+     * @param Request $request
+     */
+    public function inviteUser(Group $group, Request $request)
+    {
+        $input = $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        $user = $this->userService->getAuthenticatedUser();
+
+        $this->groupService->inviteUserWithEmail($group, $user, $input['email']);
+    }
+
+    /**
+     * @param Group $group
+     * @param GroupUser $groupUser
+     */
+    public function removeInvite(Group $group, GroupUser  $groupUser)
+    {
+        $this->groupService->removeInvite($groupUser);
     }
 }

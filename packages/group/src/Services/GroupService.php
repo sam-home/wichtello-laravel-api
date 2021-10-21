@@ -34,6 +34,8 @@ class GroupService {
         $group->status = 'start';
         $group->save();
 
+        $this->addUserToGroup($group, $user, true);
+
         return $group;
     }
 
@@ -52,8 +54,8 @@ class GroupService {
             $group->description = $input['description'];
         }
 
-        if (array_key_exists('state', $input)) {
-            $group->state = $input['state'];
+        if (array_key_exists('status', $input)) {
+            $group->status = $input['status'];
         }
 
         $group->save();
@@ -111,6 +113,7 @@ class GroupService {
         $groupUser->group_id = $group->id;
         $groupUser->creator_id = $creator->id;
         $groupUser->user_id = $user->id;
+        $groupUser->joined_at = null;
         $groupUser->save();
     }
 
@@ -220,8 +223,97 @@ class GroupService {
             return false;
         }
 
-        $group->users()->attach($user->id, ['joined_at' => Carbon::now()]);
+        $this->addUserToGroup($group, $user);
 
         return true;
+    }
+
+    /**
+     * @param Group $group
+     * @param User $user
+     * @param bool $admin
+     */
+    public function addUserToGroup(Group $group, User $user, bool $admin = false): void
+    {
+        $group->users()->attach($user->id, ['joined_at' => Carbon::now(), 'is_admin' => $admin]);
+    }
+
+    /**
+     * @param Group $group
+     * @param User $user
+     */
+    public function removeUserFromGroup(Group $group, User $user)
+    {
+        $group->users()->detach($user->id);
+    }
+
+    /**
+     * @param Group $group
+     * @param User $user
+     */
+    public function accept(Group $group, User $user)
+    {
+        GroupUser::query()
+            ->where('group_id', $group->id)
+            ->where('user_id', $user->id)
+            ->whereNull('joined_at')
+            ->update(['joined_at' => Carbon::now()]);
+    }
+
+    /**
+     * @param Group $group
+     * @param User $user
+     */
+    public function deny(Group $group, User $user)
+    {
+        GroupUser::query()
+            ->where('group_id', $group->id)
+            ->where('user_id', $user->id)
+            ->whereNull('joined_at')
+            ->delete();
+    }
+
+    public function getUser(Group $group, User $user): ?User
+    {
+        return $group->users()
+            ->wherePivot('group_id', $group->id)
+            ->wherePivot('user_id', $user->id)
+            ->first();
+    }
+
+    public function setAdmin(Group $group, User $user, bool $admin)
+    {
+        GroupUser::query()
+            ->where('group_id', $group->id)
+            ->where('user_id', $user->id)
+            ->update(['is_admin' => $admin]);
+    }
+
+    /**
+     * @param Group $group
+     * @param User $user
+     * @param string $email
+     * @return bool
+     */
+    public function inviteUserWithEmail(Group $group, User $user, string $email): bool
+    {
+        /** @var User $userToInvite */
+        $userToInvite = User::query()->where('email', $email)->first();
+
+        if ($userToInvite === null) {
+            return false;
+        }
+
+        $this->invite($group, $user, $userToInvite);
+
+        return true;
+    }
+
+    /**
+     * @param GroupUser $groupUser
+     */
+    public function removeInvite(GroupUser $groupUser)
+    {
+        $groupUser->delete();
     }
 }

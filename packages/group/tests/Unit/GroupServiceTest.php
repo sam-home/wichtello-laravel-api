@@ -2,6 +2,8 @@
 
 namespace Group\Tests\Unit;
 
+use Group\Models\Group;
+use Group\Models\GroupUser;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Group\Services\GroupService;
@@ -39,13 +41,21 @@ class GroupServiceTest extends TestCase
     {
         $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
 
-        $this->groupService->store($user, 'group name', 'group description');
+        $group = $this->groupService->store($user, 'group name', 'group description');
 
         $this->assertDatabaseHas('groups', [
             'user_id' => $user->id,
             'name' => 'group name',
-            'description' => 'group description'
+            'description' => 'group description',
+            'status' => 'start'
         ]);
+
+        $this->assertTrue(
+            DB::table('group_users')
+                ->where('group_id', $group->id)
+                ->where('user_id', $user->id)
+                ->whereNotNull('joined_at')
+                ->exists());
     }
 
     public function testUpdate()
@@ -259,5 +269,165 @@ class GroupServiceTest extends TestCase
                 ->where('user_id', $newUser->id)
                 ->whereNotNull('joined_at')
                 ->exists());
+    }
+
+    public function testAddUserToGroup()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->groupService->addUserToGroup($group, $newUser);
+
+        $this->assertDatabaseHas('group_users', [
+            'group_id' => $group->id,
+            'user_id' => $newUser->id,
+        ]);
+    }
+
+    public function testRemoveUserFromGroup()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->groupService->addUserToGroup($group, $newUser);
+
+        $this->groupService->removeUserFromGroup($group, $newUser);
+
+
+        $this->assertDatabaseMissing('group_users', [
+            'group_id' => $group->id,
+            'user_id' => $newUser->id,
+        ]);
+    }
+
+    public function testAccept()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->groupService->invite($group, $user, $newUser);
+
+        $this->assertTrue(
+            DB::table('group_users')
+                ->where('group_id', $group->id)
+                ->where('user_id', $newUser->id)
+                ->whereNull('joined_at')
+                ->exists());
+
+        $this->groupService->accept($group, $newUser);
+
+        $this->assertTrue(
+            DB::table('group_users')
+                ->where('group_id', $group->id)
+                ->where('user_id', $newUser->id)
+                ->whereNotNull('joined_at')
+                ->exists());
+    }
+
+    public function testDeny()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->groupService->invite($group, $user, $newUser);
+
+        $this->assertDatabaseHas('group_users', [
+            'group_id' => $group->id,
+            'user_id' => $newUser->id,
+            'joined_at' => null
+        ]);
+
+        $this->groupService->deny($group, $newUser);
+
+        $this->assertSoftDeleted('group_users', [
+            'group_id' => $group->id,
+            'user_id' => $newUser->id
+        ]);
+    }
+
+    public function testGetUser()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->assertNull($this->groupService->getUser($group, $newUser));
+        $this->assertNotNull($this->groupService->getUser($group, $user));
+    }
+
+    public function testSetUser()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->groupService->addUserToGroup($group, $newUser);
+
+        $this->assertDatabaseHas('group_users', [
+            'group_id' => $group->id,
+            'user_id' => $newUser->id,
+            'is_admin' => 0
+        ]);
+
+        $this->groupService->setAdmin($group, $newUser, true);
+
+        $this->assertDatabaseHas('group_users', [
+            'group_id' => $group->id,
+            'user_id' => $newUser->id,
+            'is_admin' => 1
+        ]);
+    }
+
+    public function testInviteWithEmail()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->groupService->inviteUserWithEmail($group, $user, $newUser->email);
+
+        $this->assertDatabaseHas('group_users', [
+            'group_id' => $group->id,
+            'creator_id' => $user->id,
+            'user_id' => $newUser->id,
+            'joined_at' => null
+        ]);
+    }
+
+    public function testRemoveInvite()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->groupService->invite($group, $user, $newUser);
+
+        $this->assertDatabaseHas('group_users', [
+            'group_id' => $group->id,
+            'creator_id' => $user->id,
+            'user_id' => $newUser->id,
+            'joined_at' => null
+        ]);
+
+        /** @var GroupUser $groupUser */
+        $groupUser = GroupUser::query()
+            ->where('group_id', $group->id)
+            ->where('user_id', $newUser->id)
+            ->first();
+
+        $this->assertNotNull($groupUser);
+
+        $this->groupService->removeInvite($groupUser);
+
+        $this->assertSoftDeleted('group_users', [
+            'group_id' => $group->id,
+            'creator_id' => $user->id,
+            'user_id' => $newUser->id,
+            'joined_at' => null
+        ]);
     }
 }

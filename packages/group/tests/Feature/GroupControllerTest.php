@@ -2,6 +2,7 @@
 
 namespace Group\Tests\Feature;
 
+use Group\Models\GroupUser;
 use Group\Services\GroupService;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -247,6 +248,114 @@ class GroupControllerTest extends TestCase
 
         $this->actingAs($newUser)
             ->post('/users/join', ['code' => $group->join_code])
+            ->assertStatus(200);
+    }
+
+    public function testLeave()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+
+        $this->groupService->addUserToGroup($group, $newUser);
+
+        $this->actingAs($newUser)
+            ->post('/groups/' . $group->id . '/leave')
+            ->assertStatus(200);
+    }
+
+    public function testRemoveUser()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+
+        $this->groupService->addUserToGroup($group, $newUser);
+
+        $this->actingAs($user)
+            ->delete('/groups/' . $group->id . '/users/' . $newUser->id)
+            ->assertStatus(200);
+    }
+
+    public function testAccept()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+
+        $this->groupService->invite($group, $user, $newUser);
+
+        $this->actingAs($user)
+            ->post('/groups/' . $group->id . '/accept')
+            ->assertStatus(200);
+    }
+
+    public function testDeny()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+
+        $this->groupService->invite($group, $user, $newUser);
+
+        $this->actingAs($user)
+            ->post('/groups/' . $group->id . '/deny')
+            ->assertStatus(200);
+    }
+
+    public function testGetGroupUser()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $this->actingAs($user)
+            ->get('/groups/' . $group->id . '/users/' . $user->id)
+            ->assertJsonFragment([
+                'name' => 'John Doe'
+            ])
+            ->assertStatus(200);
+    }
+
+    public function testSetAdmin()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+
+        $this->groupService->addUserToGroup($group, $newUser);
+
+        $this->actingAs($user)
+            ->put('/groups/' . $group->id . '/users/' . $newUser->id, ['admin' => true])
+            ->assertStatus(200);
+    }
+
+    public function testInviteUser()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+
+        $this->actingAs($user)
+            ->post('/groups/' . $group->id . '/invites', ['email' => $newUser->email])
+            ->assertStatus(200);
+    }
+
+    public function testRemoveInvite()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+
+        $this->groupService->invite($group, $user, $newUser);
+
+        /** @var GroupUser $groupUser */
+        $groupUser = GroupUser::query()
+            ->where('group_id', $group->id)
+            ->where('user_id', $newUser->id)
+            ->first();
+
+        $this->actingAs($user)
+            ->delete('/groups/' . $group->id . '/invites/' . $groupUser->id)
             ->assertStatus(200);
     }
 }

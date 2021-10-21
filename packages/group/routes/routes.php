@@ -1,10 +1,12 @@
 <?php
 
 use Group\Models\Group;
+use Group\Models\GroupUser;
 use Illuminate\Support\Facades\Route;
 use Group\Controllers\GroupController;
 
 Route::model('group', Group::class);
+Route::model('groupUser', GroupUser::class);
 
 Route::middleware('auth.basic')->prefix('groups')->name('groups.')->group(function () {
     $controller = GroupController::class;
@@ -18,6 +20,9 @@ Route::middleware('auth.basic')->prefix('groups')->name('groups.')->group(functi
     Route::get('{group}/partner', $controller . '@partner')->name('partner');
     Route::get('{group}/invites', $controller . '@invites')->name('invites');
     Route::get('{group}/users', $controller . '@users')->name('users');
+    Route::get('{group}/users/{user}', $controller . '@getUser')->name('users.get');
+    Route::put('{group}/users/{user}', $controller . '@updateUser')->name('users.update');
+    Route::delete('{group}/users/{user}', $controller . '@removeUser')->name('users.remove');
 
     Route::post('{group}/start', $controller . '@start')->name('start');
     Route::post('{group}/end', $controller . '@end')->name('end');
@@ -25,6 +30,12 @@ Route::middleware('auth.basic')->prefix('groups')->name('groups.')->group(functi
 
     Route::post('{group}/code', $controller . '@generateCode')->name('generate.code');
     Route::delete('{group}/code', $controller . '@resetCode')->name('reset.code');
+    Route::post('{group}/leave', $controller . '@leave')->name('leave');
+    Route::post('{group}/accept', $controller . '@accept')->name('accept');
+    Route::post('{group}/deny', $controller . '@deny')->name('deny');
+
+    Route::post('{group}/invites', $controller . '@inviteUser')->name('users.invites.add');
+    Route::delete('{group}/invites/{groupUser}', $controller . '@removeInvite')->name('users.invites.remove');
 });
 
 Route::middleware('auth.basic')->prefix('users')->name('users.')->group(function () {
