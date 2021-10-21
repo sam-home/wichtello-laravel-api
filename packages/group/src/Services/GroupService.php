@@ -160,6 +160,17 @@ class GroupService {
         $group->started_at = Carbon::now();
         $group->save();
 
+        $userIds = $group->users()->wherePivotNotNull('joined_at')->pluck('users.id')->toArray();
+        $partnerIds = $this->findPartners($userIds);
+
+        foreach ($userIds as $key => $userId) {
+            /** @var User $user */
+            $user = User::query()->find($userId);
+            /** @var User $partner */
+            $partner = User::query()->find($partnerIds[$key]);
+            $this->setPartner($group, $user, $partner);
+        }
+
         return $group;
     }
 
@@ -315,5 +326,38 @@ class GroupService {
     public function removeInvite(GroupUser $groupUser)
     {
         $groupUser->delete();
+    }
+
+    /**
+     * @param array $objects
+     * @return array
+     */
+    public function findPartners(array $objects): array
+    {
+        $pickedObjects = [];
+        $partnerIds = [];
+
+        if (sizeof($objects) === 0) {
+            return [];
+        }
+
+        if (sizeof($objects) === 1) {
+            return [];
+        }
+
+        foreach ($objects as $object) {
+            $availableObjects = array_diff($objects, $pickedObjects);
+            $availableObjects = array_diff($availableObjects, [$object]);
+
+            if (sizeof($availableObjects) === 0) {
+                return $this->findPartners($objects);
+            }
+
+            $pickedObject = $availableObjects[array_rand($availableObjects)];
+            $partnerIds[] = $pickedObject;
+            $pickedObjects[] = $pickedObject;
+        }
+
+        return $partnerIds;
     }
 }

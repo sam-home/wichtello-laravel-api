@@ -430,4 +430,18 @@ class GroupServiceTest extends TestCase
             'joined_at' => null
         ]);
     }
+
+    public function testFindPartners()
+    {
+        $ids = [10, 4, 2, 45, 23];
+
+        $partnerIds = $this->groupService->findPartners($ids);
+
+        $this->assertEquals(sizeof($ids), sizeof($partnerIds));
+
+        foreach ($ids as $key => $id) {
+            $this->assertNotEquals($partnerIds[$key], $id);
+            $this->assertTrue(in_array($id, $partnerIds));
+        }
+    }
 }
