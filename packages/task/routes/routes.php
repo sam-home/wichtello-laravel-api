@@ -16,4 +16,7 @@ Route::middleware('auth.basic')->prefix('groups/{group}/tasks')->name('group.tas
     Route::post('', $controller . '@store')->name('store');
     Route::put('{task}', $controller . '@update')->name('update');
     Route::delete('{task}', $controller . '@destroy')->name('destroy');
+
+    Route::post('{task}/join', $controller . '@join')->name('join');
+    Route::post('{task}/leave', $controller . '@leave')->name('leave');
 });

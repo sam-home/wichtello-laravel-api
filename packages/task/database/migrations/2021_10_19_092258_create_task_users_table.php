@@ -16,7 +16,7 @@ class CreateTaskUsersTable extends Migration
         Schema::create('task_users', function (Blueprint $table) {
             $table->bigInteger('task_id');
             $table->bigInteger('user_id');
-            $table->string('comment');
+            $table->string('comment')->nullable();
             $table->timestamps();
         });
     }

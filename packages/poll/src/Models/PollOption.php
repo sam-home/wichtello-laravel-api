@@ -5,7 +5,6 @@ namespace Poll\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use User\Models\User;
@@ -30,6 +29,8 @@ class PollOption extends Model
         'user_id' => 'int'
     ];
 
+    protected $appends = ['has_voted', 'count'];
+
     public function poll(): HasOne
     {
         return $this->hasOne(Poll::class, 'id', 'poll_id');
@@ -38,5 +39,22 @@ class PollOption extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'poll_user_options', 'poll_option_id', 'user_id');
+    }
+
+    public function getHasVotedAttribute(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        if ($user === null) {
+            return false;
+        }
+
+        return $this->users()->where('user_id', $user->id)->exists();
+    }
+
+    public function getCountAttribute(): int
+    {
+        return $this->users()->count();
     }
 }

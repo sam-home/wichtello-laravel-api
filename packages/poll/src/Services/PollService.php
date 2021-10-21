@@ -16,7 +16,7 @@ class PollService
      */
     public function index(Group $group): Collection
     {
-        return Poll::query()->with('options')->where('group_id', $group->id)->get();
+        return Poll::query()->with(['options', 'options.users'])->where('group_id', $group->id)->get();
     }
 
     /**
@@ -97,14 +97,14 @@ class PollService
     public function select(User $user, PollOption $option)
     {
 
-        $this->unselect($user, $option);
+        $this->unselect($user, $option->poll);
 
         $option->users()->attach($user->id);
     }
 
-    public function unselect(User $user, PollOption $option)
+    public function unselect(User $user, Poll $poll)
     {
-        $option->poll->options->each(function (PollOption $option) use ($user) {
+        $poll->options->each(function (PollOption $option) use ($user) {
             $option->users()->detach($user->id);
         });
     }

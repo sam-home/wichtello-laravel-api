@@ -151,7 +151,7 @@ class PollServiceTest extends TestCase
         $pollOption = PollOption::query()->where('poll_id', $poll->id)->first();
 
         $this->pollService->select($user, $pollOption);
-        $this->pollService->unselect($user, $pollOption);
+        $this->pollService->unselect($user, $poll);
 
         $this->assertDatabaseMissing('poll_user_options', [
             'poll_option_id' => $pollOption->id,

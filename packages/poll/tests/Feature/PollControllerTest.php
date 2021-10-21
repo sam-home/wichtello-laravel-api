@@ -144,7 +144,7 @@ class PollControllerTest extends TestCase
         /** @var PollOption $pollOption */
         $pollOption = PollOption::query()->where('poll_id', $poll->id)->first();
 
-        $this->actingAs($user)->post('/groups/' . $group->id . '/polls/' . $poll->id . '/unselect/' . $pollOption->id)
+        $this->actingAs($user)->post('/groups/' . $group->id . '/polls/' . $poll->id . '/unselect')
             ->assertStatus(200);
     }
 }

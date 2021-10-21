@@ -117,4 +117,24 @@ class TaskControllerTest extends TestCase
             'slots' => 2,
         ]);
     }
+
+    public function testJoin()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $task = $this->taskService->store($group, $user, 'task name', 'task description', 2);
+
+        $this->actingAs($user)->post('/groups/' . $group->id . '/tasks/' . $task->id . '/join')
+            ->assertStatus(200);
+    }
+
+    public function testLeave()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $task = $this->taskService->store($group, $user, 'task name', 'task description', 2);
+
+        $this->actingAs($user)->post('/groups/' . $group->id . '/tasks/' . $task->id . '/leave')
+            ->assertStatus(200);
+    }
 }

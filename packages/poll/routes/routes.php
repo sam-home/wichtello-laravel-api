@@ -19,5 +19,5 @@ Route::middleware('auth.basic')->prefix('groups/{group}/polls')->name('group.pol
     Route::put('{poll}', $controller . '@update')->name('update');
     Route::delete('{poll}', $controller . '@destroy')->name('destroy');
     Route::post('{poll}/select/{pollOption}', $controller . '@select')->name('select');
-    Route::post('{poll}/unselect/{pollOption}', $controller . '@unselect')->name('unselect');
+    Route::post('{poll}/unselect', $controller . '@unselect')->name('unselect');
 });

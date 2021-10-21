@@ -32,7 +32,7 @@ class PollController
      */
     public function get(Group $group, Poll $poll): Poll
     {
-        $poll->load(['options']);
+        $poll->load(['options', 'options.users']);
         return $poll;
     }
 
@@ -88,10 +88,10 @@ class PollController
         $this->pollService->select($user, $pollOption);
     }
 
-    public function unselect(Group $group, Poll $poll, PollOption $pollOption)
+    public function unselect(Group $group, Poll $poll)
     {
         $user = $this->userService->getAuthenticatedUser();
 
-        $this->pollService->unselect($user, $pollOption);
+        $this->pollService->unselect($user, $poll);
     }
 }

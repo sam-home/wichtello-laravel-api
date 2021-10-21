@@ -79,7 +79,7 @@ class TaskService
      */
     public function join(Task $task, User $user, ?string $comment = null)
     {
-        $task->users()->attach($user->id, ['comment' => $comment ?? '']);
+        $task->users()->attach($user->id, ['comment' => $comment]);
     }
 
     /**

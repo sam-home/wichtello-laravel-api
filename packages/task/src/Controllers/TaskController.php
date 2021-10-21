@@ -8,10 +8,11 @@ use Illuminate\Support\Collection;
 use User\Models\User;
 use Task\Models\Task;
 use Task\Services\TaskService;
+use User\Services\UserService;
 
 class TaskController
 {
-    public function __construct(public TaskService $taskService) {
+    public function __construct(private TaskService $taskService, private UserService $userService) {
     }
 
     /**
@@ -76,5 +77,29 @@ class TaskController
     public function destroy(Group $group, Task $task)
     {
         $this->taskService->destroy($task);
+    }
+
+    /**
+     * @param Group $group
+     * @param Task $task
+     */
+    public function join(Group $group, Task $task, Request $request)
+    {
+        $input = $request->validate([
+            'comment' => 'sometimes'
+        ]);
+
+        $user = $this->userService->getAuthenticatedUser();
+        $this->taskService->join($task, $user, $input['comment']);
+    }
+
+    /**
+     * @param Group $group
+     * @param Task $task
+     */
+    public function leave(Group $group, Task $task)
+    {
+        $user = $this->userService->getAuthenticatedUser();
+        $this->taskService->leave($task, $user);
     }
 }
