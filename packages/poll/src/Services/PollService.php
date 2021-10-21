@@ -93,4 +93,19 @@ class PollService
             $pollOption->save();
         }
     }
+
+    public function select(User $user, PollOption $option)
+    {
+
+        $this->unselect($user, $option);
+
+        $option->users()->attach($user->id);
+    }
+
+    public function unselect(User $user, PollOption $option)
+    {
+        $option->poll->options->each(function (PollOption $option) use ($user) {
+            $option->users()->detach($user->id);
+        });
+    }
 }

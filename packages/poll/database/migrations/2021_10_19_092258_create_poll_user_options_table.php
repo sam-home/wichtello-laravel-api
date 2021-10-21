@@ -15,7 +15,7 @@ class CreatePollUserOptionsTable extends Migration
     {
         Schema::create('poll_user_options', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('poll_options_id');
+            $table->bigInteger('poll_option_id');
             $table->bigInteger('user_id');
             $table->timestamps();
             $table->softDeletes();

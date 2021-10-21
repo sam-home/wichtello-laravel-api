@@ -5,13 +5,15 @@ namespace Poll\Controllers;
 use Group\Models\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Poll\Models\PollOption;
 use User\Models\User;
 use Poll\Models\Poll;
 use Poll\Services\PollService;
+use User\Services\UserService;
 
 class PollController
 {
-    public function __construct(public PollService $pollService) {
+    public function __construct(public PollService $pollService, public UserService $userService) {
     }
 
     /**
@@ -77,5 +79,19 @@ class PollController
     public function destroy(Group $group, Poll $poll)
     {
         $this->pollService->destroy($poll);
+    }
+
+    public function select(Group $group, Poll $poll, PollOption $pollOption)
+    {
+        $user = $this->userService->getAuthenticatedUser();
+
+        $this->pollService->select($user, $pollOption);
+    }
+
+    public function unselect(Group $group, Poll $poll, PollOption $pollOption)
+    {
+        $user = $this->userService->getAuthenticatedUser();
+
+        $this->pollService->unselect($user, $pollOption);
     }
 }

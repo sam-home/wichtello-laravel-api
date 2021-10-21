@@ -71,4 +71,23 @@ class TaskService
     {
         return $task->delete() === true;
     }
+
+    /**
+     * @param Task $task
+     * @param User $user
+     * @param string|null $comment
+     */
+    public function join(Task $task, User $user, ?string $comment = null)
+    {
+        $task->users()->attach($user->id, ['comment' => $comment ?? '']);
+    }
+
+    /**
+     * @param Task $task
+     * @param User $user
+     */
+    public function leave(Task $task, User $user)
+    {
+        $task->users()->detach($user->id);
+    }
 }

@@ -101,4 +101,33 @@ class TaskServiceTest extends TestCase
             'description' => 'task description',
         ]);
     }
+
+    public function testJoin()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $task = $this->taskService->store($group, $user, 'task name', 'task description', 2);
+
+        $this->taskService->join($task, $user, 'the comment');
+
+        $this->assertDatabaseHas('task_users', [
+            'user_id' => $user->id,
+            'comment' => 'the comment'
+        ]);
+    }
+
+    public function testLeave()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $task = $this->taskService->store($group, $user, 'task name', 'task description', 2);
+
+        $this->taskService->join($task, $user, 'the comment');
+        $this->taskService->leave($task, $user);
+
+        $this->assertDatabaseMissing('task_users', [
+            'user_id' => $user->id,
+            'comment' => 'the comment'
+        ]);
+    }
 }

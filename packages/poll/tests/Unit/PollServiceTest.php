@@ -5,6 +5,7 @@ namespace Poll\Tests\Unit;
 use Group\Services\GroupService;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Poll\Models\PollOption;
 use User\Services\UserService;
 use Poll\Services\PollService;
 use Tests\TestCase;
@@ -120,6 +121,41 @@ class PollServiceTest extends TestCase
 
         $this->assertSoftDeleted('poll_options', [
             'content' => 'option 1'
+        ]);
+    }
+
+    public function testSelect()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $poll = $this->pollService->store($group, $user, 'poll name', 'poll description', ['option 1']);
+
+        /** @var PollOption $pollOption */
+        $pollOption = PollOption::query()->where('poll_id', $poll->id)->first();
+
+        $this->pollService->select($user, $pollOption);
+
+        $this->assertDatabaseHas('poll_user_options', [
+            'poll_option_id' => $pollOption->id,
+            'user_id' => $user->id
+        ]);
+    }
+
+    public function testUnselect()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+        $poll = $this->pollService->store($group, $user, 'poll name', 'poll description', ['option 1']);
+
+        /** @var PollOption $pollOption */
+        $pollOption = PollOption::query()->where('poll_id', $poll->id)->first();
+
+        $this->pollService->select($user, $pollOption);
+        $this->pollService->unselect($user, $pollOption);
+
+        $this->assertDatabaseMissing('poll_user_options', [
+            'poll_option_id' => $pollOption->id,
+            'user_id' => $user->id
         ]);
     }
 }
