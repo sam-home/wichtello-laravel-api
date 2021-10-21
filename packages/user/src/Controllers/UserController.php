@@ -57,4 +57,13 @@ class UserController
 
         $this->userService->change($input['code'], $input['password']);
     }
+
+    public function verify(Request $request)
+    {
+        $input = $request->validate([
+            'confirm' => 'required'
+        ]);
+
+        $this->userService->verify($input['confirm']);
+    }
 }

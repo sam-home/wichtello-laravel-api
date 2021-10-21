@@ -21,4 +21,5 @@ Route::prefix('users')->name('user.')->group(function () {
     Route::post('register', $controller . '@register')->name('register');
     Route::post('reset', $controller . '@reset')->name('reset');
     Route::post('change', $controller . '@change')->name('change');
+    Route::post('verify', $controller . '@verify')->name('verify');
 });

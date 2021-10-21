@@ -10,7 +10,7 @@ Hallo {{ $user->name }},
 </p>
 
 <p>
-    Um den Account zu aktivieren klicke auf den folgenden den <a href="{{ env('APP_URL') }}/users/register/confirm?confirm={{ $confirm }}">Link</a>.
+    Um den Account zu aktivieren klicke auf den folgenden den <a href="{{ env('APP_URL') }}/users/confirm?confirm={{ $user->confirm }}">Link</a>.
 </p>
 
 <p>

@@ -90,4 +90,12 @@ class UserControllerTest extends TestCase
         $this->actingAs($user)->post('/users/change', ['code' => $user->reset, 'password' => 'secret123'])
             ->assertStatus(200);
     }
+
+    public function testVerify()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret');
+
+        $this->actingAs($user)->post('/users/verify', ['confirm' => $user->confirm])
+            ->assertStatus(200);
+    }
 }

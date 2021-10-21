@@ -5,30 +5,22 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use User\Models\User;
 
 class RegisterEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $user;
-    protected $password;
-    protected $confirm;
-
-    public function __construct($user, $password, $confirm)
+    public function __construct(protected User $user, protected string $password)
     {
-        $this->user = $user;
-        $this->password = $password;
-        $this->confirm = $confirm;
     }
 
-    public function build()
+    public function build(): Mailable
     {
         return $this->subject('Registrierung bei Wichtello.com')
             ->view('emails.register', [
                 'user' => $this->user,
-                'password' => $this->password,
-                'confirm' => $this->confirm
+                'password' => $this->password
             ]);
     }
 }

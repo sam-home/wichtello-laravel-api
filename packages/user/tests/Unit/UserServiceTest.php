@@ -195,4 +195,22 @@ class UserServiceTest extends TestCase
 
         $this->assertTrue($this->userService->checkPassword($user, 'secret'));
     }
+
+    public function testVerify()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.org', 'start');
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'John Doe',
+            'active' => 0
+        ]);
+
+        $this->userService->verify($user->confirm);
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'John Doe',
+            'active' => 1,
+            'confirm' => null
+        ]);
+    }
 }

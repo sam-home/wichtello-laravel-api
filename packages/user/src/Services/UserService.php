@@ -3,6 +3,7 @@
 namespace User\Services;
 
 use App\Mail\ForgetPasswordEmail;
+use App\Mail\RegisterEmail;
 use Illuminate\Support\Facades\Mail;
 use User\Exceptions\ConfirmException;
 use User\Exceptions\ResetException;
@@ -227,5 +228,28 @@ class UserService {
         $user->save();
 
         return true;
+    }
+
+    public function verify(string $confirmToken): bool
+    {
+        /** @var User $user */
+        $user = User::query()->where('confirm', $confirmToken)->first();
+
+        if ($user === null) {
+            return false;
+        }
+
+        $user->active = true;
+        $user->confirm = null;
+        $user->save();
+
+        return true;
+    }
+
+    public function register(string $name, string $email, string $password)
+    {
+        $user = $this->store($name, $email, $password);
+
+        Mail::to($email)->send(new RegisterEmail($user, $password));
     }
 }
