@@ -82,6 +82,7 @@ class TaskController
     /**
      * @param Group $group
      * @param Task $task
+     * @param Request $request
      */
     public function join(Group $group, Task $task, Request $request)
     {
@@ -90,7 +91,7 @@ class TaskController
         ]);
 
         $user = $this->userService->getAuthenticatedUser();
-        $this->taskService->join($task, $user, $input['comment']);
+        $this->taskService->join($task, $user, $input['comment'] ?? null);
     }
 
     /**
