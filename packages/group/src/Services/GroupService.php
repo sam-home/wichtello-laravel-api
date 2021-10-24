@@ -16,7 +16,9 @@ class GroupService {
      */
     public function index(User $user): Collection
     {
-        return Group::query()->where('user_id', $user->id)->get();
+        $groupIds = GroupUser::query()->where('user_id', $user->id)->pluck('group_id');
+
+        return Group::query()->whereIn('id', $groupIds->toArray())->get();
     }
 
     /**

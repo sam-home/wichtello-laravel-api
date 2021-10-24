@@ -37,6 +37,24 @@ class GroupServiceTest extends TestCase
         $this->assertEquals([], $groups->toArray());
     }
 
+    public function testIndexOtherUsers()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $otherUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $groups = $this->groupService->index($user);
+        $this->assertCount(1, $groups);
+
+        $groups = $this->groupService->index($otherUser);
+        $this->assertCount(0, $groups);
+
+        $this->groupService->addUserToGroup($group, $otherUser);
+        $groups = $this->groupService->index($otherUser);
+        $this->assertCount(1, $groups);
+    }
+
     public function testStore()
     {
         $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
