@@ -110,11 +110,11 @@ class GroupControllerTest extends TestCase
         $this->actingAs($user)->post('/groups', [], ['Accept' => 'application/json'])
             ->assertStatus(422)
             ->assertJsonFragment([
-                'errors' => [
-                    'name' => ['The name field is required.'],
-                    'description' => ['The description field is required.']
-                ],
-                'message' => 'The given data was invalid.'
+                'error' => [
+                    'data' => [
+                        'name' => ['The name field is required.']
+                    ]
+                ]
             ]);
     }
 
@@ -161,7 +161,9 @@ class GroupControllerTest extends TestCase
         $this->actingAs($foreignUser)
             ->put('/groups/' . $group->id, ['name' => 'test', 'description' => 'test'], ['Accept' => 'application/json'])
             ->assertExactJson([
-                'error' => 'Du hast die Gruppe nicht erstellt.'
+                'error' => [
+                    'message' => 'Du hast die Gruppe nicht erstellt.'
+                ]
             ])
             ->assertStatus(403);
     }

@@ -24,10 +24,10 @@ class GroupService {
     /**
      * @param User $user
      * @param string $name
-     * @param string $description
+     * @param string|null $description
      * @return Group
      */
-    public function store(User $user, string $name, string $description): Group
+    public function store(User $user, string $name, ?string $description): Group
     {
         $group = new Group();
         $group->user_id = $user->id;

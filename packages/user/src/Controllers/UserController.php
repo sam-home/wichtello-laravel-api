@@ -37,7 +37,7 @@ class UserController
     {
         $input = $request->validate([
             'name' => 'required',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required',
             'password_confirm' => 'required'
         ]);

@@ -40,7 +40,7 @@ class GroupController
     {
         $input = $request->validate([
             'name' => 'required',
-            'description' => 'required'
+            'description' => 'sometimes'
         ]);
 
         /** @var User $user */
