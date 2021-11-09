@@ -78,7 +78,7 @@ class UserService {
      */
     protected function generateRandomToken(): string
     {
-        return hash('sha256', time() . uniqid() . rand());
+        return hash('sha1', time() . uniqid() . rand());
     }
 
     /**

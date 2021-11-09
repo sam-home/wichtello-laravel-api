@@ -19,7 +19,7 @@ class ForgetPasswordEmail extends Mailable
     {
         return $this->subject('Passwort vergessen bei Wichtello.com')
             ->view('emails.forget-password', [
-                'passwordReset' => $this->user->reset
+                'user' => $this->user
             ]);
     }
 }
