@@ -25,6 +25,16 @@ class UserControllerTest extends TestCase
         $this->userService = app()->make(UserService::class);
     }
 
+    public function testInvalidCredentials()
+    {
+        $this->userService->store('John Doe', 'john.doe@example.org', 'secret', true);
+
+        $credentials = 'Basic ' . base64_encode('john.doe@example.org:wrong-secret');
+
+        $this->withHeader('Authorization', $credentials)->post('/users/authenticate')
+            ->assertStatus(401);
+    }
+
     public function testMe()
     {
         $user = $this->userService->store('John Doe', 'john.doe@example.org', 'secret', true);
