@@ -18,7 +18,10 @@ class GroupService {
     {
         $groupIds = GroupUser::query()->where('user_id', $user->id)->pluck('group_id');
 
-        return Group::query()->whereIn('id', $groupIds->toArray())->get();
+        return Group::query()
+            ->whereIn('id', $groupIds->toArray())
+            ->orWhere('user_id', $user->id)
+            ->get();
     }
 
     /**
