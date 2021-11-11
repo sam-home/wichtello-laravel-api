@@ -6,6 +6,7 @@ use Group\Models\GroupUser;
 use Group\Services\GroupService;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 use User\Services\UserService;
 
@@ -251,6 +252,19 @@ class GroupControllerTest extends TestCase
         $this->actingAs($newUser)
             ->post('/users/join', ['code' => $group->join_code])
             ->assertStatus(200);
+
+        $this->assertDatabaseHas('group_users', [
+            'user_id' => $newUser->id,
+            'group_id' => $group->id
+        ]);
+
+        $this->actingAs($newUser)
+            ->post('/users/join', ['code' => $group->join_code])
+            ->assertStatus(200);
+
+        $count = DB::table('group_users')->where('user_id', $newUser->id)->where('group_id', $group->id)->count();
+
+        $this->assertEquals(1, $count);
     }
 
     public function testLeave()

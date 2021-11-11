@@ -262,7 +262,7 @@ class GroupService {
      */
     public function hasUserInGroup(Group $group, User $user): bool
     {
-        return GroupUser::query()->where('group_id', $group)->where('user_id', $user->id)->exists();
+        return GroupUser::query()->where('group_id', $group->id)->where('user_id', $user->id)->exists();
     }
 
     /**
