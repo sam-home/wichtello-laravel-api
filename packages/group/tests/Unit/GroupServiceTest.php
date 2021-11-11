@@ -2,7 +2,6 @@
 
 namespace Group\Tests\Unit;
 
-use Group\Models\Group;
 use Group\Models\GroupUser;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -307,16 +306,22 @@ class GroupServiceTest extends TestCase
     {
         $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
         $newUser = $this->userService->store('Jane Doe', 'jane.doe@example.com', 'secret');
+        $otherUser = $this->userService->store('Mary Doe', 'mary.doe@example.com', 'secret');
         $group = $this->groupService->store($user, 'group name', 'group description');
 
         $this->groupService->addUserToGroup($group, $newUser);
+        $this->groupService->addUserToGroup($group, $otherUser);
 
         $this->groupService->removeUserFromGroup($group, $newUser);
-
 
         $this->assertDatabaseMissing('group_users', [
             'group_id' => $group->id,
             'user_id' => $newUser->id,
+        ]);
+
+        $this->assertDatabaseHas('group_users', [
+            'group_id' => $group->id,
+            'user_id' => $otherUser->id,
         ]);
     }
 

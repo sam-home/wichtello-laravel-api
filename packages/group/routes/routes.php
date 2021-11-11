@@ -4,7 +4,9 @@ use Group\Models\Group;
 use Group\Models\GroupUser;
 use Illuminate\Support\Facades\Route;
 use Group\Controllers\GroupController;
+use User\Models\User;
 
+Route::model('user', User::class);
 Route::model('group', Group::class);
 Route::model('groupUser', GroupUser::class);
 
