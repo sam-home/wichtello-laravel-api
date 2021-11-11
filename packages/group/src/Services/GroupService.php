@@ -258,10 +258,24 @@ class GroupService {
     /**
      * @param Group $group
      * @param User $user
+     * @return bool
+     */
+    public function hasUserInGroup(Group $group, User $user): bool
+    {
+        return GroupUser::query()->where('group_id', $group)->where('user_id', $user->id)->exists();
+    }
+
+    /**
+     * @param Group $group
+     * @param User $user
      * @param bool $admin
      */
     public function addUserToGroup(Group $group, User $user, bool $admin = false): void
     {
+        if ($this->hasUserInGroup($group, $user)) {
+            return;
+        }
+
         $group->users()->attach($user->id, ['joined_at' => Carbon::now(), 'is_admin' => $admin]);
     }
 
