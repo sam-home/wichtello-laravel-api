@@ -230,10 +230,21 @@ class GroupService {
         return $group;
     }
 
-    public function join(User $user, string $code): bool
+    /**
+     * @param string $code
+     * @return ?Group
+     */
+    public function getGroupWithCode(string $code): ?Group
     {
         /** @var Group $group */
         $group = Group::query()->where('join_code', $code)->first();
+
+        return $group;
+    }
+
+    public function join(User $user, string $code): bool
+    {
+        $group = $this->getGroupWithCode($code);
 
         if ($group === null) {
             return false;

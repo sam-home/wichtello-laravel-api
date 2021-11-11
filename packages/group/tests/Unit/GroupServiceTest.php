@@ -278,7 +278,11 @@ class GroupServiceTest extends TestCase
 
         $group = $this->groupService->generateCode($group);
 
-        $this->groupService->join($newUser, $group->join_code);
+        $group = $this->groupService->getGroupWithCode($group->join_code);
+
+        if ($group !== null) {
+            $this->groupService->addUserToGroup($group, $newUser);
+        }
 
         $this->assertTrue(
             DB::table('group_users')
@@ -286,6 +290,18 @@ class GroupServiceTest extends TestCase
                 ->where('user_id', $newUser->id)
                 ->whereNotNull('joined_at')
                 ->exists());
+    }
+
+    public function testGetGroupWithCode()
+    {
+        $user = $this->userService->store('John Doe', 'john.doe@example.com', 'secret');
+        $group = $this->groupService->store($user, 'group name', 'group description');
+
+        $group = $this->groupService->generateCode($group);
+
+        $group = $this->groupService->getGroupWithCode($group->join_code);
+
+        $this->assertNotNull($group);
     }
 
     public function testAddUserToGroup()

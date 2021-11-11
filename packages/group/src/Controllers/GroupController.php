@@ -152,8 +152,9 @@ class GroupController
 
     /**
      * @param Request $request
+     * @return ?Group
      */
-    public function join(Request $request)
+    public function join(Request $request): ?Group
     {
         $input = $request->validate([
             'code' => 'required'
@@ -161,7 +162,13 @@ class GroupController
 
         $user = $this->userService->getAuthenticatedUser();
 
-        $this->groupService->join($user, $input['code']);
+        $group = $this->groupService->getGroupWithCode($input['code']);
+
+        if ($group !== null) {
+            $this->groupService->addUserToGroup($group, $user);
+        }
+
+        return $group;
     }
 
     /**
